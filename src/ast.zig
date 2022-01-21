@@ -1,3 +1,5 @@
+const checker = @import("checker.zig");
+
 const Prog = []const Stmt;
 
 const Stmt = union(enum) {
@@ -28,18 +30,21 @@ const Stmt = union(enum) {
     @"continue": void,
 };
 
-const Expr = union(enum) {
-    call: *const struct {
-        func: Expr,
-        args: []const Expr,
+const Expr = struct {
+    expr: union(enum) {
+        call: *const struct {
+            func: Expr,
+            args: []const Expr,
+        },
+        op: *const struct {
+            op: Op,
+            lhs: Expr,
+            rhs: Expr,
+        },
+        name: []const u8,
+        lit: Lit,
     },
-    op: *const struct {
-        op: Op,
-        lhs: Expr,
-        rhs: Expr,
-    },
-    name: []const u8,
-    lit: Lit,
+    type: checker.Type,
 };
 
 const Type = union(enum) {
