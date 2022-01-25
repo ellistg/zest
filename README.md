@@ -16,30 +16,80 @@ Zest comments start with `//` and finish at the end of the line. Following in [Z
 
 # Values
 ```
-let a : int = 5;
-let b : float = 5.0;
-let c : bool = true or false; // true
-let d : char = 'a'; // TODO : figure out how char works
+let a : u64 = 5;
+let b = a + 5;;
+let c : i25 = -3;
 
-let e : []char = "hello";
+let d = true or false; // infered as bool 
+let e : rune = 'a';
+
+let f : string = "hello";
+let g = string[0]; // 'h'
 
 // Any type can have the optional property.
 // This means that the type is either "null" or the inner type.
-let f : ?[]char = "world";
+let g : ?[]char = "world";
 
-let g = e + f.?;
-
-let g = 5; // type can be infered
+// assume that `f` isn't null, h = "hello world"
+let h = e + " " + f.?; 
 ```
 
 ## Primitive Types
 
 The primitive types are as follows:
 
-| Type | Description           |
-| -----| ----------------------|
-| int  | bigint                |
-| float| 64-bit floating point |
-| bool | `true` or `false`     |
-| char | TODO                  |
-| void | 0 bit type            |
+| Type       | Description                                                       |
+|------------|-------------------------------------------------------------------|
+| string     | byte array representing unicode characters                        |
+| u[1-65535] | unsigned integer with size as specified                           |
+| i[1-65535] | signed integer with size as specified                             |
+| f16        | 16-bit floating point (10-bit mantissa) IEEE-754-2008 binary16    |
+| f32        | 32-bit floating point (23-bit mantissa) IEEE-754-2008 binary32    |
+| f64        | 64-bit floating point (52-bit mantissa) IEEE-754-2008 binary64    |
+| f128       | 128-bit floating point (112-bit mantissa) IEEE-754-2008 binary128 |
+| bool       | `true` or `false`                                                 |
+| void       | 0 bit type                                                        |
+
+## Primitive Values
+
+| Name               | Description                           |
+|--------------------|---------------------------------------|
+| `true` and `false` | bool values                           |
+| null               | used to set and optional type to null |
+
+# Strings
+
+The string is the most complex primative type, it is a sequence of Unicode code points with automatic encoding and decoding to/from integer types. 
+
+```
+let a = "Hello World!";
+
+// When indexing a string the type returned will be `u21` which would then need to be explicitly casted to any other in type you would want.
+@assert(@TypeOf(a[0]) == u21);
+
+```
+
+TODO : string methods
+
+## Unicode Code Points
+
+When wanting to store single characters we can store then as integers, the standard would be to store them in `u21`, however, there is nothing forcing this.
+
+```
+let a = 'a';
+let b : u8 = 'b';
+
+@assert(@TypeOf(a) == u21);
+@assert(@TypeOf(b) == u8);
+```
+
+| Escape Sequence | Name                                                            |
+|-----------------|-----------------------------------------------------------------|
+|`\n`             | Newline                                                         |
+|`\r`             | Carriage Return                                                 |
+|`\t`             | Tab                                                             |
+|`\\`             | Backslash                                                       |
+|`\'`             | Single Quote                                                    |
+|`\"`             | Double Quote                                                    |
+|`\xNN`           | hexadecimal 8-bit byte value (2 digits)                         |
+|`\u{NNNNNN}`     | hexadecimal Unicode code point UTF-8 encoded (1 or more digits) |
